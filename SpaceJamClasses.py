@@ -8,7 +8,8 @@ from direct.gui.OnscreenImage import OnscreenImage
 from direct.interval.LerpInterval import LerpFunc
 from direct.particles.ParticleEffect import ParticleEffect 
 import re 
-import DefensePaths as defensePaths # new
+import DefensePaths as defensePaths 
+from direct.interval.IntervalGlobal import Sequence # new
 
 
 class Planet(SphereCollideObject):
@@ -25,7 +26,7 @@ class Planet(SphereCollideObject):
         
         self.loader = loader
         self.render = render
-# new 
+ 
 class Orbiter(SphereCollideObject):
     numOrbits = 0
     velocity =0.005
@@ -63,7 +64,7 @@ class Orbiter(SphereCollideObject):
  
         self.modelNode.lookAt(self.staringAt.modelNode)
         return task.cont
-#  
+
 class Universe(InverseSphereCollideObject):
     def __init__(self, loader: Loader, render: NodePath, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float):
         super(Universe, self).__init__(loader, modelPath, parentNode, nodeName,Vec3 (0, 0, 0), 1.2)
@@ -300,9 +301,60 @@ class Spaceship(SphereCollideObject):# / player
             print(shooter + ' is Done.')
             Missile.Intervals[shooter].finish()
             print(victim, ' hit at ', intoPosition)
-        
+#new
+        elif strippedString == "Planet":
+            Missile.Intervals[shooter.finish]
+            self.PlanrtDestroy(victim)
+
+        elif strippedString == "Space Station":
+            Missile.Intervals[shooter.finish]
+            self.SpaceStationDestroy(victim)
+#
         else:
             Missile.Intervals[shooter.finish]
+#new
+    def PlanrtDestroy(self, victim: NodePath):
+        nodeId =self.render.find(victim)
+
+        self.taskMgr.add(self.PlanrtShrink, name = "PlanrtShrink", extraArgs = [nodeId], appendTask = True)
+
+    def PlanrtShrink(self, nodeId: NodePath, task):
+        if task.time < 2.0:
+            if nodeId.getBounds().getRadius() > 0:
+                scaleSubtraction = 10 
+                nodeId.setScale(nodeId.getScale() - scaleSubtraction)
+                temp = 30 * random.random()
+                nodeId.setH(nodeId.getH() + temp)
+                return task.cont
+        else: 
+
+            nodeId.detachNode()
+            return task.done
+        
+    def SpaceStationDestroy(self, victim: NodePath):
+        nodeId =self.render.find(victim)
+
+        self.taskMgr.add(self.SpaceStationShrink, name = "SpaceStationShrink", extraArgs = [nodeId], appendTask = True)
+
+    def SpaceStationShrink(self, nodeId: NodePath, task):
+        if task.time < 2.0:
+            if nodeId.getBounds().getRadius() > 0:
+                scaleSubtraction = 10 
+                nodeId.setScale(nodeId.getScale() - scaleSubtraction)
+                temp = 30 * random.random()
+                nodeId.setH(nodeId.getH() + temp)
+                return task.cont
+        else: 
+
+            nodeId.detachNode()
+            return task.done
+
+
+
+
+#
+        
+
               
 class SpaceStation(CollisionCapsuleObject):
     def __init__(self, loader: Loader, render: NodePath, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, radius: float):
@@ -384,3 +436,26 @@ class DroneShowBase(SphereCollideObject):
 #
     # # of Drone
     droneCount = 0
+# new
+class Wanderer(SphereCollideObject):
+    numWanderers = 0 
+
+    def __init__(self, loader: Loader, modelPath: str, parentNode: NodePath, nodeName: str, scaleVec: Vec3, texPath: str, staringAt: Vec3):
+        super(Wanderer, self).__init__(loader, modelPath, parentNode, nodeName, Vec3 (0, 0, 0), 3.2) 
+
+        self.modelNode.setScale(scaleVec)
+        tex = loader.loadTexture(texPath)
+        self.modelNode.setTexture(tex,1)
+        self.staringAt = staringAt
+        Wanderer.numWanderers += 1
+
+        posInterval0 = self.modelNode.posInterval(20, Vec3(300, 6000, 500), starpos = Vec3(0, 0, 0))
+        posInterval1 = self.modelNode.posInterval(20, Vec3(700, -2000, 100), starpos = Vec3(300, 6000, 500))
+        posInterval2 = self.modelNode.posInterval(20, Vec3(0, -900, -1400), starpos = Vec3(700, -2000, 100))
+
+        self.travelRoute = Sequence(posInterval0, posInterval1, posInterval2, name ="Traveler")
+        
+        self.travelRoute.loop()
+
+
+#
