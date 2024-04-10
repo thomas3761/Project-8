@@ -348,14 +348,8 @@ class Spaceship(SphereCollideObject):# / player
 
             nodeId.detachNode()
             return task.done
-
-
-
-
 #
-        
-
-              
+                  
 class SpaceStation(CollisionCapsuleObject):
     def __init__(self, loader: Loader, render: NodePath, modelPath: str, parentNode: NodePath, nodeName: str, texPath: str, posVec: Vec3, scaleVec: float, radius: float):
         super(SpaceStation, self).__init__(loader, modelPath, parentNode, nodeName,1, -1, 5, 1, -1, -5, 0)
@@ -456,6 +450,4 @@ class Wanderer(SphereCollideObject):
         self.travelRoute = Sequence(posInterval0, posInterval1, posInterval2, name ="Traveler")
         
         self.travelRoute.loop()
-
-
 #

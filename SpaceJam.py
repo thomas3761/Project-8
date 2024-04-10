@@ -31,7 +31,8 @@ class SpaceJam(ShowBase):
         self.Sentinal1 = spaceJamClasses.Orbiter(self.loader, self.taskMgr, "./Assets/DroneDefender/DroneDefender.obj", self.render, "Drone", 6.0, "./Assets/DroneDefender/octotoad1_auv.png", self.planet5, 900, "MLB", self.Spaceship)
 
 # new   
-        self.Wanderer = spaceJamClasses.Wanderer(self.loader, self.taskMgr, "./Assets/DroneDefender/DroneDefender.obj", self.render, "Drone", 6.0, "./Assets/DroneDefender/octotoad1_auv.png", self.Spaceship)
+        self.Wanderer = spaceJamClasses.Wanderer(self.loader, "./Assets/DroneDefender/DroneDefender.obj", self.render, "Drone", Vec3(6.0, 6.0, 6.0), "./Assets/DroneDefender/octotoad1_auv.png", Vec3(0, 0, 0))
+
 #
 
         self.cTrav = CollisionTraverser()
